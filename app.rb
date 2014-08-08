@@ -20,13 +20,8 @@ class Application < Lichard
 end
 
 
-
-
-
-
 app = Application.new
 
 app.router.process(:get, '/resources/3')
 app.router.process(:post, '/resources/4')
 app.router.process(:patch, '/resources/45')
-

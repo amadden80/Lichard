@@ -1,5 +1,5 @@
+# Web Router
 class Lichard
-
   def self.inherited(subclass)
     @@router = Router.new()
   end
@@ -15,17 +15,18 @@ class Lichard
       super
     end
   end
-
 end
 
 class Lichard::Router
   def initialize
     @routes = {}
   end
+
   def define_route(verb, path, &block)
     @routes[verb] = @routes[verb] || []
     @routes[verb] << Route.new(path, &block)
   end
+
   def process(verb, path)
     @routes[verb].each do |route|
       if response = route.process(path)
@@ -40,17 +41,16 @@ class Lichard::Router::Route
     @path = path
     @params_keys = @path.scan(/:(\w+)/).flatten.map(&:to_sym)
     @regex = Regexp.new(@path.gsub(/:[a-z\d$]+/, '([a-z\d]+)'))
-    @nblock = Proc.new(&block)
+    @block = block
   end
+
   def process(path)
     scan = path.scan(@regex)
-    if scan.length > 0
-      @params = Hash[@params_keys.zip(path.scan(@regex).flatten)]
-      instance_eval &@nblock
-    else
-      false
-    end
+    return false if scan.length <= 0
+    @params = Hash[@params_keys.zip(path.scan(@regex).flatten)]
+    instance_eval &@block
   end
+
   def params
     @params
   end
