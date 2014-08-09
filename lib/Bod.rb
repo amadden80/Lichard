@@ -23,7 +23,6 @@ class Bod
     @@connection = PG::Connection.open(:dbname => config['database'])
   end
 
-
   def self.all
     self.exec_records("SELECT * FROM #{ @@table_name };")
   end
